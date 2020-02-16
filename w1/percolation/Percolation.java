@@ -3,6 +3,7 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
 
     private WeightedQuickUnionUF union;
+    private WeightedQuickUnionUF unionFull;
     private boolean[] open;
     private int nbOpen;
     private int n;
@@ -15,15 +16,12 @@ public class Percolation {
         }
         end = n*n + 1;
         open = new boolean[end + 1];
+        unionFull = new WeightedQuickUnionUF(open.length);
         union = new WeightedQuickUnionUF(open.length);
         nbOpen = 0;
         this.n = n;
     }
 
-    // 1, 1 -> 0*10 + 1 = 1
-    // 1, 2  -> 0*10 + 2 = 2
-    // 1, 10 -> 0*10 + 10 = 10
-    // 2, 1 -> 1*10 + 1 = 11
     private int getIndex(int row, int col) {
         if (row <= 0 || col <= 0 || row > n || col > n) {
             return -1;
@@ -36,6 +34,9 @@ public class Percolation {
         if (i < 0) {
             throw new IllegalArgumentException();
         }
+        if(open[i]) {
+            return;
+        }
         open[i] = true;
         nbOpen++;
         int[] neighbours = new int[]{
@@ -47,13 +48,15 @@ public class Percolation {
         for (int j = 0; j < neighbours.length; j ++) {
             if (neighbours[j] > 0 && open[neighbours[j]]) {
                 union.union(neighbours[j], i);
+                unionFull.union(neighbours[j], i);
             }
         }
         if (row == 1) {
             union.union(0, i);
+            unionFull.union(0, i);
         }
-        else if (row == n) {
-            union.union(end, i);
+        if (row == n) {
+            unionFull.union(end, i);
         }
     }
 
@@ -82,7 +85,7 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return union.connected(0, end);
+        return unionFull.connected(0, end);
     }
 
     // test client (optional)
