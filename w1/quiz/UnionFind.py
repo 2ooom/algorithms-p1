@@ -1,13 +1,3 @@
-"""
-Social network connectivity. Given a social network containing n members
-and a log file containing m timestamps at which times pairs of members
-formed friendships, design an algorithm to determine the earliest time
-at which all members are connected (i.e., every member is a friend of a
-friend of a friend ... of a friend). Assume that the log file is sorted
-by timestamp and that friendship is an equivalence relation. The running
-time of your algorithm should be `m log ⁡n` or better and use
-extra space proportional to `n`.
-"""
 import unittest
 
 class UnionFind:
@@ -42,13 +32,6 @@ class UnionFind:
     def connected(self, i, j):
         return self._root(i) == self._root(j)
 
-def get_earliest_connection_time(timestamps, n):
-    union = UnionFind(n)
-    for (t, p, q) in timestamps:
-        union.union(p, q)
-        if union.get_union_size(p) == n:
-            return t
-    return None
 
 class UnionFindTests(unittest.TestCase):
 
@@ -67,7 +50,6 @@ class UnionFindTests(unittest.TestCase):
         union.union(1, 5)
         self.assertTrue(union.connected(1, 5))
         self.assertTrue(union.connected(5, 1))
-        self.assertEqual(union.get_union_size(1), 2)
 
     def test_union_indirect(self):
         union = UnionFind(10)
@@ -75,10 +57,11 @@ class UnionFindTests(unittest.TestCase):
         union.union(0, 4)
         union.union(4, 9)
         union.union(9, 1)
-        self.assertTrue(union.connected(0, 4))
-        self.assertTrue(union.connected(9, 5))
-        self.assertTrue(union.connected(1, 4))
-        self.assertEqual(union.get_union_size(0), 5)
+        connected = [0, 1, 4, 5, 9]
+        for i in connected:
+            self.assertEquals(union.get_union_size(i), len(connected))
+            for j in connected:
+                self.assertTrue(union.connected(i, j))
 
     def test_union_full(self):
         n = 10
@@ -92,8 +75,11 @@ class UnionFindTests(unittest.TestCase):
         union.union(6, 7)
         union.union(1, 2)
         union.union(9, 7)
+
         for i in range(n):
-            self.assertEqual(union.get_union_size(i), n)
+            self.assertEquals(union.get_union_size(i), n)
+            for j in range(n):
+                self.assertTrue(union.connected(i, j))
 
 if __name__ == '__main__':
     unittest.main()
