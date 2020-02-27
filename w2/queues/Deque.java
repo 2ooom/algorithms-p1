@@ -77,6 +77,7 @@ public class Deque<Item> implements Iterable<Item> {
             head = tail = null;
         } else {
             tail = tail.previous;
+            tail.next = null;
         }
         size--;
         return node.item;
@@ -118,17 +119,14 @@ public class Deque<Item> implements Iterable<Item> {
 
     // unit testing (required)
     public static void main(String[] args) {
-        Deque<Integer> d = new Deque<>();
-        d.addFirst(1);
-        d.addFirst(2);
-        d.addFirst(3);
-        d.addFirst(4);
-        d.addLast(0);
-        d.addLast(-1);
-        d.addLast(-2);
-        d.addLast(-3);
-        for(Integer i: d) {
-            System.out.println(i);
+        Deque<Integer> deque = new Deque<Integer>();
+        deque.addLast(1);
+        deque.addFirst(2);
+        deque.addLast(3);
+        System.out.println(deque.removeFirst());
+        System.out.println(deque.removeLast());
+        for (Integer x: deque){
+            System.out.println(x);
         }
     }
 

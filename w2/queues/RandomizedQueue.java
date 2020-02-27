@@ -96,7 +96,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private int getRandomIndex() {
         int i = head + StdRandom.uniform(size);
-        if (i >= capacity) {
+        if (i - 1 >= capacity) {
             i -= capacity;
         }
         return i;
@@ -136,15 +136,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // unit testing (required)
     public static void main(String[] args) {
-        RandomizedQueue<Integer> rq = new RandomizedQueue<>();
-        rq.enqueue(1);
+        RandomizedQueue<Integer> rq = new RandomizedQueue<Integer>();
         rq.enqueue(2);
+        System.out.println(rq.dequeue());//     ==> 2
+        System.out.println(rq.size());//        ==> 0
         rq.enqueue(3);
-        rq.enqueue(4);
-        for (int i = 0; i < 4; i++) {
-            System.out.println(rq.sample());
-            System.out.println(rq.dequeue());
-        }
+        System.out.println(rq.dequeue());//     ==> null
     }
 
 }
