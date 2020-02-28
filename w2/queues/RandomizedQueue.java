@@ -54,7 +54,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     private Item[] getNewArray(int newSize) {
         int currentHead = head;
         Item[] newItems = (Item[])new Object[newSize];
-        for(int i = 0; i < capacity; i++) {
+        for(int i = 0; i < newSize; i++) {
             newItems[i] = items[currentHead];
             currentHead++;
             if (currentHead >= capacity) {
@@ -69,9 +69,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new java.util.NoSuchElementException();
         }
-        swap(head, getRandomIndex());
+        swap(head, getRandomIndex(), items);
         Item item = items[head];
-        if (head + 1 >= capacity) {
+        items[head] = null;
+        if (size == 1) {
+            head = tail = 0;
+        } else if (head + 1 >= capacity) {
             head = 0;
         } else {
             head++;
@@ -80,10 +83,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         return item;
     }
 
-    private void swap(int i, int j) {
-        Item tmp = items[i];
-        items[i] = items[j];
-        items[j] = tmp;
+    private void swap(int i, int j, Item[] collecton) {
+        Item tmp = collecton[i];
+        collecton[i] = collecton[j];
+        collecton[j] = tmp;
     }
 
     // return a random item (but do not remove it)
@@ -96,7 +99,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private int getRandomIndex() {
         int i = head + StdRandom.uniform(size);
-        if (i - 1 >= capacity) {
+        if (i >= capacity) {
             i -= capacity;
         }
         return i;
@@ -119,7 +122,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
 
         public boolean hasNext() {
-            return itemsCopy.length - 1  == pos;
+            return itemsCopy.length  > pos;
         }
 
         public Item next() {
@@ -127,7 +130,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
                 throw new java.util.NoSuchElementException();
             }
             int rPos = StdRandom.uniform(pos, itemsCopy.length);
-            swap(pos, rPos);
+            swap(pos, rPos, itemsCopy);
             Item res = itemsCopy[pos];
             pos++;
             return res;
@@ -137,11 +140,19 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     // unit testing (required)
     public static void main(String[] args) {
         RandomizedQueue<Integer> rq = new RandomizedQueue<Integer>();
-        rq.enqueue(2);
-        System.out.println(rq.dequeue());//     ==> 2
-        System.out.println(rq.size());//        ==> 0
-        rq.enqueue(3);
-        System.out.println(rq.dequeue());//     ==> null
+        rq.enqueue(221);
+        rq.enqueue(370);
+        rq.enqueue(452);
+        rq.dequeue();//     ==> 370
+        rq.enqueue(393);
+        rq.dequeue();//     ==> 370
+        rq = new RandomizedQueue<>();
+        for(int i = 0; i < 10; i++) {
+            rq.enqueue(i);
+        }
+        for(Integer x: rq) {
+            System.out.println(x);
+        }
     }
 
 }
