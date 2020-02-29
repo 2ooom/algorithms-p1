@@ -30,11 +30,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if(item == null) {
             throw new IllegalArgumentException();
         }
+        if (size == capacity) {
+            resize(capacity * 2);
+        }
         if (!isEmpty()) {
-            if (size + 1 >= capacity) {
-                resize();
-            }
-            else if (tail + 1 >= capacity) {
+            if (tail + 1 >= capacity) {
                 tail = 0;
             } else {
                 tail++;
@@ -44,20 +44,21 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         items[tail] = item;
     }
 
-    private void resize() {
-        items = getNewArray(capacity * 2);
+    private void resize(int newSize) {
+        items = getNewArray(newSize);
         head = 0;
-        tail = capacity - 1;
-        capacity *= 2;
+        tail = Math.max(0, size - 1);
+        capacity = newSize;
     }
 
     private Item[] getNewArray(int newSize) {
         int currentHead = head;
+        int oldSize = items.length;
         Item[] newItems = (Item[])new Object[newSize];
-        for(int i = 0; i < newSize; i++) {
+        for(int i = 0; i < size; i++) {
             newItems[i] = items[currentHead];
             currentHead++;
-            if (currentHead >= capacity) {
+            if (currentHead >= oldSize) {
                 currentHead = 0;
             }
         }
@@ -80,6 +81,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             head++;
         }
         size--;
+        if(capacity >= 4 && capacity / 4 >= size) {
+            resize(capacity / 2);
+        }
         return item;
     }
 
@@ -153,6 +157,35 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         for(Integer x: rq) {
             System.out.println(x);
         }
+        for(int i = 0; i < 10; i++) {
+            rq.dequeue();
+        }
+        for(Integer x: rq) {
+            System.out.println(x);
+        }
+        // Test
+        rq = new RandomizedQueue<Integer>();
+        assert rq.isEmpty();
+        rq.enqueue(471);//
+        assert rq.dequeue() == 471;
+        assert rq.isEmpty();
+        rq.enqueue(144);
+        assert rq.size() == 1;
+        // Test
+        rq = new RandomizedQueue<Integer>();
+        rq.enqueue(11);
+        assert rq.size() == 1;
+        rq.enqueue(13);
+        Integer r = rq.dequeue();
+        assert r == 13 || r == 11;
+        rq = new RandomizedQueue<Integer>();
+        rq.enqueue(28);
+        assert rq.dequeue() == 28;
+        assert rq.size() == 0;
+        rq.enqueue(40);
+        assert rq.dequeue() == 40;
+        assert rq.isEmpty();
+        rq.enqueue(28);
     }
 
 }

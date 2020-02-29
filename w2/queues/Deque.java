@@ -62,6 +62,7 @@ public class Deque<Item> implements Iterable<Item> {
             head = tail = null;
         } else {
             head = head.next;
+            head.previous = null;
         }
         size--;
         return node.item;
@@ -72,7 +73,7 @@ public class Deque<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new java.util.NoSuchElementException();
         }
-        Node<Item> node = tail;
+        Item result = tail.item;
         if (size() == 1) {
             head = tail = null;
         } else {
@@ -80,7 +81,7 @@ public class Deque<Item> implements Iterable<Item> {
             tail.next = null;
         }
         size--;
-        return node.item;
+        return result;
     }
 
     // return an iterator over items in order from front to back
